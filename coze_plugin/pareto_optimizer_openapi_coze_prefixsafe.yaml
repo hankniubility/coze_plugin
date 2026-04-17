@@ -1,30 +1,12 @@
 openapi: 3.0.3
 info:
   title: Travel Pareto Multi-Objective Optimizer
-  version: 1.0.0
-  description: >
-    Pareto optimizer for travel itinerary planning.
-    It optimizes 8 objectives: cost, experience match, physical load, time efficiency,
-    content richness, crowd comfort, weather adaptability, and route continuity.
+  version: 1.0.2
+  description: Coze prefix-safe OpenAPI for Pareto optimization.
 servers:
-  - url: https://coze-pareto-plugin.onrender.com
+  - url: https://coze-pareto-plugin.onrender.com/api/plugin/pareto
 paths:
-  /api/plugin/pareto/health:
-    get:
-      operationId: paretoHealth
-      summary: Health check
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
-  /api/plugin/pareto/optimize:
+  /optimize:
     post:
       operationId: paretoOptimize
       summary: Run preference-guided Pareto optimization
@@ -213,3 +195,4 @@ components:
           minimum: 1
           maximum: 100
           default: 15
+
