@@ -7,7 +7,7 @@ info:
     It optimizes 8 objectives: cost, experience match, physical load, time efficiency,
     content richness, crowd comfort, weather adaptability, and route continuity.
 servers:
-  - url: https://YOUR_SERVER_DOMAIN
+  - url: https://coze-pareto-plugin.onrender.com
 paths:
   /api/plugin/pareto/health:
     get:
@@ -210,4 +210,3 @@ components:
           minimum: 1
           maximum: 100
           default: 15
-
