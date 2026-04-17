@@ -1,0 +1,213 @@
+openapi: 3.0.3
+info:
+  title: Travel Pareto Multi-Objective Optimizer
+  version: 1.0.0
+  description: >
+    Pareto optimizer for travel itinerary planning.
+    It optimizes 8 objectives: cost, experience match, physical load, time efficiency,
+    content richness, crowd comfort, weather adaptability, and route continuity.
+servers:
+  - url: https://YOUR_SERVER_DOMAIN
+paths:
+  /api/plugin/pareto/health:
+    get:
+      operationId: paretoHealth
+      summary: Health check
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /api/plugin/pareto/optimize:
+    post:
+      operationId: paretoOptimize
+      summary: Run preference-guided Pareto optimization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ParetoOptimizeRequest"
+      responses:
+        "200":
+          description: Optimization result
+          content:
+            application/json:
+              schema:
+                type: object
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+components:
+  schemas:
+    ParetoPOIInput:
+      type: object
+      required: [poi_id, name]
+      properties:
+        poi_id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+          default: other
+        tags:
+          type: array
+          items:
+            type: string
+        cost:
+          type: number
+          minimum: 0
+          default: 0
+        visit_minutes:
+          type: integer
+          minimum: 10
+          maximum: 720
+          default: 60
+        physical_intensity:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0.5
+        stairs:
+          type: integer
+          minimum: 0
+          default: 0
+        indoor:
+          type: boolean
+          default: false
+        crowd_by_hour:
+          type: object
+          additionalProperties:
+            type: number
+            minimum: 0
+            maximum: 1
+    ParetoUserPreferenceInput:
+      type: object
+      required: [budget]
+      properties:
+        budget:
+          type: number
+          minimum: 0.000001
+        preferred_tags:
+          type: array
+          items:
+            type: string
+        day_start_hour:
+          type: integer
+          minimum: 0
+          maximum: 23
+          default: 9
+        day_end_hour:
+          type: integer
+          minimum: 1
+          maximum: 24
+          default: 21
+        target_stops:
+          type: integer
+          minimum: 2
+          maximum: 20
+          default: 5
+    ParetoWeightsInput:
+      type: object
+      properties:
+        cost:
+          type: number
+          minimum: 0
+          default: 1
+        experience:
+          type: number
+          minimum: 0
+          default: 1
+        physical:
+          type: number
+          minimum: 0
+          default: 1
+        time_efficiency:
+          type: number
+          minimum: 0
+          default: 1
+        content_richness:
+          type: number
+          minimum: 0
+          default: 1
+        crowd_comfort:
+          type: number
+          minimum: 0
+          default: 1
+        weather_adaptability:
+          type: number
+          minimum: 0
+          default: 1
+        continuity:
+          type: number
+          minimum: 0
+          default: 1
+    ParetoOptimizeRequest:
+      type: object
+      required: [pois, travel_minutes, user_preference]
+      properties:
+        pois:
+          type: array
+          minItems: 3
+          maxItems: 120
+          items:
+            $ref: "#/components/schemas/ParetoPOIInput"
+        travel_minutes:
+          type: object
+          additionalProperties:
+            type: object
+            additionalProperties:
+              type: number
+              minimum: 0
+        user_preference:
+          $ref: "#/components/schemas/ParetoUserPreferenceInput"
+        weather_by_hour:
+          type: object
+          additionalProperties:
+            type: number
+            minimum: 0
+            maximum: 1
+        weights:
+          $ref: "#/components/schemas/ParetoWeightsInput"
+        population_size:
+          type: integer
+          minimum: 20
+          maximum: 300
+          default: 80
+        generations:
+          type: integer
+          minimum: 10
+          maximum: 1000
+          default: 100
+        crossover_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0.9
+        mutation_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+          default: 0.25
+        random_seed:
+          type: integer
+          nullable: true
+        top_k:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 15
+

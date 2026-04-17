@@ -1,0 +1,2 @@
+"""Pareto optimization plugin package."""
+
